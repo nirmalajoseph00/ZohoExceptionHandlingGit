@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Scanner;
 
+class Reference
+{
+	public static int currentPosition=-1;
+}
 
 interface Shortcuts {
 	void addShortcut(String shortcutUrl);
@@ -145,6 +149,7 @@ class Browser {
 		BrowserHistory(String homepage)	
 		{
 			url.add(homepage);
+			Reference.currentPosition++;
 		}
 		void visit(String visitUrl)
 		{
@@ -154,7 +159,8 @@ class Browser {
 				extension=visitUrl.substring(extensionIndex, visitUrl.length());
 				if (Arrays.asList(extensionsArray).contains(extension))
 				{
-					url.add(visitUrl);
+					Reference.currentPosition++;
+					url.add(Reference.currentPosition,visitUrl);
 					display();
 				}
 				else
@@ -169,52 +175,62 @@ class Browser {
 		}
 		public String back(int steps)
 		{
+			int currentUrlPosition=Reference.currentPosition;
 			try
 			{
-				ListIterator<String> urlIterator = url.listIterator(url.size());
-				for(int i=0;i<=steps;i++) 
+				ListIterator<String> urlIterator = url.listIterator(currentUrlPosition);
+				for(int i=0;i<steps;i++) 
 				{
 					if (urlIterator.hasPrevious())
+					{
 						urlIterator.previous();
+						Reference.currentPosition--;
+					}
 					else
 						throw new NoHistoryFoundException("No History Found");
 				}
-				return(urlIterator.next());
+				//Reference.currentPosition++;
+				System.out.println(url.get(Reference.currentPosition));
+				return (urlIterator.next());
 			}
 			catch(NoHistoryFoundException noHistoryFound)
 			{
+				Reference.currentPosition=currentUrlPosition;
 				System.out.println(noHistoryFound.getMessage());
 			}
-			finally
-			{
-				ListIterator<String> urlIterator=url.listIterator(url.size());
-			}
-			return null;
+			System.out.println(url.get(Reference.currentPosition));
+			return url.get(currentUrlPosition);
 		}
 		public String forward(int steps)
 		{
+			int currentUrlPosition=Reference.currentPosition;
 			try
 			{
-				ListIterator<String> urlIterator = url.listIterator();
+				ListIterator<String> urlIterator = url.listIterator(currentUrlPosition);
 				for(int i=0;i<=steps;i++) 
 				{
 					if (urlIterator.hasNext())
+					{
 						urlIterator.next();
+						Reference.currentPosition++;
+					}
 					else
 						throw new NoHistoryFoundException("No History Found");
 				}
+				Reference.currentPosition--;
+				System.out.println(url.get(Reference.currentPosition));
 				return(urlIterator.previous());
 			}
 			catch(NoHistoryFoundException noHistoryFound)
 			{
+				Reference.currentPosition=currentUrlPosition;//return to current url
 				System.out.println(noHistoryFound.getMessage());
 			}
-			finally
-			{
-				return url.get(0);
-			}
+			
+			System.out.println(url.get(Reference.currentPosition));
+			return url.get(currentUrlPosition);
 		}
-		public String get(int position)
+		public String getUrl(int position)
 		{
 			return url.get((position));
 		}
@@ -466,7 +482,7 @@ public class BrowserExceptionHandling{
 				String urlInPosition;
 				System.out.println("Enter the position of url you want to get: ");
 				position=in.nextInt();
-				urlInPosition=browserHistoryObject.forward(position-1);
+				urlInPosition=browserHistoryObject.getUrl(position-1);
 				System.out.println("Url at position "+position+": "+urlInPosition);
 				break;
 			case 13:
