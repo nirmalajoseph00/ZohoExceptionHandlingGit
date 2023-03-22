@@ -32,6 +32,12 @@ class NoHistoryFoundException extends Exception {
 		super(s); 
 	}
 }
+class InvalidPositionException extends Exception {
+	public InvalidPositionException(String s)
+	{
+		super(s); 
+	}
+}
 
 class Browser {
 	private ArrayList<String> url = new ArrayList<>();
@@ -190,7 +196,7 @@ class Browser {
 						throw new NoHistoryFoundException("No History Found");
 				}
 				//Reference.currentPosition++;
-				System.out.println(url.get(Reference.currentPosition));
+				//System.out.println(url.get(Reference.currentPosition));
 				return (urlIterator.next());
 			}
 			catch(NoHistoryFoundException noHistoryFound)
@@ -198,7 +204,7 @@ class Browser {
 				Reference.currentPosition=currentUrlPosition;
 				System.out.println(noHistoryFound.getMessage());
 			}
-			System.out.println(url.get(Reference.currentPosition));
+			//System.out.println(url.get(Reference.currentPosition));
 			return url.get(currentUrlPosition);
 		}
 		public String forward(int steps)
@@ -218,7 +224,7 @@ class Browser {
 						throw new NoHistoryFoundException("No History Found");
 				}
 				Reference.currentPosition--;
-				System.out.println(url.get(Reference.currentPosition));
+				//System.out.println(url.get(Reference.currentPosition));
 				return(urlIterator.previous());
 			}
 			catch(NoHistoryFoundException noHistoryFound)
@@ -227,12 +233,30 @@ class Browser {
 				System.out.println(noHistoryFound.getMessage());
 			}
 			
-			System.out.println(url.get(Reference.currentPosition));
+			//System.out.println(url.get(Reference.currentPosition));
 			return url.get(currentUrlPosition);
 		}
 		public String getUrl(int position)
 		{
-			return url.get((position));
+			String urlInPosition=null;
+			try
+			{
+				if (position<0)
+				{
+					throw new InvalidPositionException("Provide only positive values");
+				}
+				else
+					urlInPosition=url.get((position));
+			}
+			catch(InvalidPositionException invalidPosition)
+			{
+				System.out.println(invalidPosition.getMessage());
+			}
+			catch(Exception e)
+			{
+				System.out.println("Invalid position");
+			}
+			return urlInPosition;
 		}
 		
 		
@@ -468,14 +492,14 @@ public class BrowserExceptionHandling{
 				System.out.println("Enter the number of steps you want to move back: ");
 				steps=in.nextInt();
 				backUrl=browserHistoryObject.back(steps);
-				System.out.println("Url when you go back "+steps+" steps: "+backUrl);
+				System.out.println(backUrl);
 				break;
 			case 11:
 				String forwardUrl;
 				System.out.println("Enter the number of steps you want to move forward: ");
 				steps=in.nextInt();
 				forwardUrl=browserHistoryObject.forward(steps);
-				System.out.println("Url when you go forward "+steps+" steps: "+forwardUrl);
+				System.out.println(forwardUrl);
 				break;
 			case 12:
 				int position;
@@ -483,7 +507,7 @@ public class BrowserExceptionHandling{
 				System.out.println("Enter the position of url you want to get: ");
 				position=in.nextInt();
 				urlInPosition=browserHistoryObject.getUrl(position-1);
-				System.out.println("Url at position "+position+": "+urlInPosition);
+				System.out.println(urlInPosition);
 				break;
 			case 13:
 				System.out.println("Do you want to continue(Y/N): ");
