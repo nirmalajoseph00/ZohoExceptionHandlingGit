@@ -20,18 +20,21 @@ interface Shortcuts {
 	void viewShortcuts();
 }
 
+@SuppressWarnings("serial")
 class InvalidURLException extends Exception {
 	public InvalidURLException(String s)
 	{
 		super(s); 
 	}
 }
+@SuppressWarnings("serial")
 class NoHistoryFoundException extends Exception {
 	public NoHistoryFoundException(String s)
 	{
 		super(s); 
 	}
 }
+@SuppressWarnings("serial")
 class InvalidPositionException extends Exception {
 	public InvalidPositionException(String s)
 	{
@@ -492,14 +495,14 @@ public class BrowserExceptionHandling{
 				System.out.println("Enter the number of steps you want to move back: ");
 				steps=in.nextInt();
 				backUrl=browserHistoryObject.back(steps);
-				System.out.println(backUrl);
+				System.out.println("Current url: "+ backUrl);
 				break;
 			case 11:
 				String forwardUrl;
 				System.out.println("Enter the number of steps you want to move forward: ");
 				steps=in.nextInt();
 				forwardUrl=browserHistoryObject.forward(steps);
-				System.out.println(forwardUrl);
+				System.out.println("Current url: "+forwardUrl);
 				break;
 			case 12:
 				int position;
@@ -507,7 +510,8 @@ public class BrowserExceptionHandling{
 				System.out.println("Enter the position of url you want to get: ");
 				position=in.nextInt();
 				urlInPosition=browserHistoryObject.getUrl(position-1);
-				System.out.println(urlInPosition);
+				if (urlInPosition!=null)
+					System.out.println(urlInPosition);
 				break;
 			case 13:
 				System.out.println("Do you want to continue(Y/N): ");
